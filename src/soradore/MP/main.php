@@ -19,7 +19,8 @@ class main extends PluginBase implements Listener{
 	}
 
 	public function onJoin(PlayerJoinEvent $ev){
-		$task = new MsgTask($this);
+		$player = $ev->getPlayer();
+		$task = new MsgTask($this, $player, "適当なメッセージ");
 		$this->getServer()->getScheduler()->scheduleRepeatingTask($task, 15);
 	}
 }
@@ -27,33 +28,24 @@ class main extends PluginBase implements Listener{
 class MsgTask extends PluginTask{
 
 	private $count = 0;
-	const MAX = 10;
+	const MAX = 13;
 
-	public $msg = [
-		          "こんにちは、ようこそ",
-		          "Hello, Welcome."
-	              ];
 
-	public function __construct($plugin){
+	public function __construct($plugin, $player, $msg){
 		parent::__construct($plugin);
-		$this->msg = $this->getMsg();
+		$this->player = $player;
+		$this->msg = str_repeat(" ", self::MAX) . $msg . str_repeat(" ", self::MAX);;
 	}
 
 
 	public function onRun(int $tick){
 		$count = $this->count;
 		$msg = $this->msg;
-		
-		$msg = str_repeat(" ", self::MAX) . $msg . str_repeat(" ", self::MAX);
+		if($count == mb_strlen($msg)) $this->getHandler()->cancel();
 		$msg = mb_substr($msg, $count, self::MAX);
-		Server::getInstance()->broadcastPopup( "§a" . $msg . " \n\n\n\n");
+		$this->player->sendPopup( "§a" . $msg . " \n\n\n\n");
 		$this->increment();
 	} 
-
-
-	public function getMsg($key = 0){
-		return $this->msg[$key];
-	}
 
 
 	private function increment(){
