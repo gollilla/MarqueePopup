@@ -34,7 +34,7 @@ class MsgTask extends PluginTask{
 	public function __construct($plugin, $player, $msg){
 		parent::__construct($plugin);
 		$this->player = $player;
-		$this->msg = str_repeat(" ", self::MAX) . $msg . str_repeat(" ", self::MAX);;
+		$this->msg = str_repeat(" ", self::MAX) . $msg . str_repeat(" ", self::MAX);
 	}
 
 
