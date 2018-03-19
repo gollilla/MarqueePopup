@@ -20,7 +20,7 @@ class main extends PluginBase implements Listener{
 
 	public function onJoin(PlayerJoinEvent $ev){
 		$player = $ev->getPlayer();
-		$task = new MsgTask($this, $player, "適当なメッセージ");
+		$task = new MsgTask($this, $player, "適当なメッセージ, §a適当すぎるメッセージ, §bめっちゃ適当なメッセージ");
 		$this->getServer()->getScheduler()->scheduleRepeatingTask($task, 15);
 	}
 }
@@ -28,6 +28,7 @@ class main extends PluginBase implements Listener{
 class MsgTask extends PluginTask{
 
 	private $count = 0;
+	private $color = "§f";
 	const MAX = 13;
 
 
@@ -43,9 +44,21 @@ class MsgTask extends PluginTask{
 		$msg = $this->msg;
 		if($count == mb_strlen($msg)) $this->getHandler()->cancel();
 		$msg = mb_substr($msg, $count, self::MAX);
-		$this->player->sendPopup( "§a" . $msg . " \n\n\n\n");
+
+		$tmpC = mb_strpos($msg, "§");
+		if($tmpC !== false && $tmpC == 0){
+			$color = mb_substr($msg, $tmpC, 2);
+			$this->setColor($color);
+		}
+
+		$this->player->sendPopup($this->color . $msg . " \n\n\n\n");
 		$this->increment();
 	} 
+
+
+	public function setColor($color = "§f"){
+		$this->color = $color;
+	}
 
 
 	private function increment(){
